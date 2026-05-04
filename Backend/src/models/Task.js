@@ -20,6 +20,11 @@ const taskSchema = new mongoose.Schema({
     ref: "Project",
     required: true
   },
+  assignedTo: {
+  type: mongoose.Schema.Types.ObjectId,
+  ref: "User",
+  default: null
+},
   dueDate: Date
 }, { timestamps: true })
 

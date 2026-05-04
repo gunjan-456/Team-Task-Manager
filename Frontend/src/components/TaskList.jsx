@@ -81,7 +81,6 @@ export default function TaskList({ selectedProject, tasks, setTasks }) {
           className="p-4 mb-3 bg-white/20 rounded flex justify-between items-center"
         >
 
-         
           <div>
             {editingId === t._id ? (
               <input
@@ -93,7 +92,10 @@ export default function TaskList({ selectedProject, tasks, setTasks }) {
               <p className="font-semibold">{t.title}</p>
             )}
 
-       
+            <p className="text-sm text-white/60">
+              👤 {t.assignedTo?.name || "Unassigned"}
+            </p>
+
             <span
               className={`text-xs px-2 py-1 rounded mt-1 inline-block
                 ${t.status === "todo" && "bg-yellow-400 text-black"}
@@ -105,10 +107,8 @@ export default function TaskList({ selectedProject, tasks, setTasks }) {
             </span>
           </div>
 
-       
           <div className="flex gap-2">
 
-           
             <button
               onClick={() => toggleStatus(t)}
               className="bg-purple-500 px-3 py-1 rounded"
@@ -135,7 +135,6 @@ export default function TaskList({ selectedProject, tasks, setTasks }) {
               </button>
             )}
 
-          
             <button
               onClick={() => deleteTask(t._id)}
               className="bg-red-500 px-3 py-1 rounded"

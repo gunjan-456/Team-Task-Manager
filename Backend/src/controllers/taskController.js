@@ -10,6 +10,7 @@ exports.createTask = async (req, res) => {
       title: req.body.title,
       project: req.body.project,
       user: req.user.id,
+       assignedTo: req.body.assignedTo || null, 
       status: "todo"
     })
 
@@ -23,7 +24,7 @@ exports.getTasks = async (req, res) => {
   try {
     const tasks = await Task.find({
       project: req.params.projectId
-    })
+    }).populate("assignedTo", "name")  
 
     res.json(tasks)
   } catch (err) {
