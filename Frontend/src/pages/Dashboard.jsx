@@ -1,6 +1,6 @@
 import { useState } from "react"
 import ProjectList from "../components/ProjectList"
-import CreateProject from "../components/CreateProject"
+import CreateProject from "../components/createProject"
 import TaskList from "../components/TaskList"
 import AddTask from "../components/AddTask"
 import Stats from "../components/Stats"
