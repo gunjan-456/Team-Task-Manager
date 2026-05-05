@@ -3,11 +3,9 @@ import API from "../api/axios"
 
 export default function AddTask({ selectedProject, setTasks }) {
 
-  
   const [title, setTitle] = useState("")
   const [users, setUsers] = useState([])
   const [assignedTo, setAssignedTo] = useState("")
-
 
   useEffect(() => {
     API.get("/users").then(res => setUsers(res.data))
@@ -21,15 +19,16 @@ export default function AddTask({ selectedProject, setTasks }) {
       await API.post("/tasks", {
         title,
         project: selectedProject._id,
-        assignedTo   
+        assignedTo: assignedTo || null   
       })
 
       const res = await API.get(`/tasks/${selectedProject._id}`)
       setTasks(res.data)
 
       setTitle("")
-      setAssignedTo("")   
+      setAssignedTo("")
     } catch (err) {
+      console.log(err.response?.data || err.message)
       alert("Error adding task")
     }
   }
@@ -37,15 +36,22 @@ export default function AddTask({ selectedProject, setTasks }) {
   return (
     <div className="mb-4">
 
-    
+  
       <select
         value={assignedTo}
         onChange={(e) => setAssignedTo(e.target.value)}
-        className="w-full p-2 mb-2 rounded bg-white/20"
+        className="w-full p-2 mb-2 rounded bg-white/20 text-white"
       >
-        <option value="">Assign user</option>
+        <option value="" className="text-black">
+          Assign user
+        </option>
+
         {users.map((u) => (
-          <option key={u._id} value={u._id}>
+          <option
+            key={u._id}
+            value={u._id}
+            className="text-black"   
+          >
             {u.name}
           </option>
         ))}

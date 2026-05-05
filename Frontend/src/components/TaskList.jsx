@@ -6,6 +6,9 @@ export default function TaskList({ selectedProject, tasks, setTasks }) {
   const [editingId, setEditingId] = useState(null)
   const [editText, setEditText] = useState("")
 
+
+  const userId = JSON.parse(localStorage.getItem("user"))?._id
+
   useEffect(() => {
     if (!selectedProject) {
       setTasks([])
@@ -22,6 +25,7 @@ export default function TaskList({ selectedProject, tasks, setTasks }) {
 
  
   const toggleStatus = async (task) => {
+  try {
     const next =
       task.status === "todo"
         ? "inprogress"
@@ -33,17 +37,27 @@ export default function TaskList({ selectedProject, tasks, setTasks }) {
       status: next
     })
 
+    console.log(res.data) 
+
     setTasks(prev =>
       prev.map(t => (t._id === task._id ? res.data : t))
     )
+  } catch (err) {
+    console.log(err.response?.data || err.message) 
+    alert("Error updating task")
   }
+}
 
 
-  const deleteTask = async (id) => {
+const deleteTask = async (id) => {
+  try {
     await API.delete(`/tasks/${id}`)
     setTasks(prev => prev.filter(t => t._id !== id))
+  } catch (err) {
+    console.log(err.response?.data || err.message) 
+    alert("Error deleting task")
   }
-
+}
  
   const saveEdit = async (id) => {
     const res = await API.put(`/tasks/${id}`, {
@@ -65,13 +79,13 @@ export default function TaskList({ selectedProject, tasks, setTasks }) {
   }
 
   if (tasks.length === 0) {
-  return (
-    <div className="text-center text-white/60 mt-10">
-      <p className="text-lg">No tasks yet</p>
-      <p className="text-sm mt-1">Add your first task 🚀</p>
-    </div>
-  )
-}
+    return (
+      <div className="text-center text-white/60 mt-10">
+        <p className="text-lg">No tasks yet</p>
+        <p className="text-sm mt-1">Add your first task 🚀</p>
+      </div>
+    )
+  }
 
   return (
     <div>
@@ -109,38 +123,46 @@ export default function TaskList({ selectedProject, tasks, setTasks }) {
 
           <div className="flex gap-2">
 
-            <button
-              onClick={() => toggleStatus(t)}
-              className="bg-purple-500 px-3 py-1 rounded"
-            >
-              Change
-            </button>
-
-            {editingId === t._id ? (
+            {(t.user?._id === userId || t.assignedTo?._id === userId) && (
               <button
-                onClick={() => saveEdit(t._id)}
-                className="bg-green-500 px-3 py-1 rounded"
+                onClick={() => toggleStatus(t)}
+                className="bg-purple-500 px-3 py-1 rounded"
               >
-                Save
-              </button>
-            ) : (
-              <button
-                onClick={() => {
-                  setEditingId(t._id)
-                  setEditText(t.title)
-                }}
-                className="bg-blue-500 px-3 py-1 rounded"
-              >
-                Edit
+                Change
               </button>
             )}
 
-            <button
-              onClick={() => deleteTask(t._id)}
-              className="bg-red-500 px-3 py-1 rounded"
-            >
-              Delete
-            </button>
+            
+            {t.user?._id === userId && (
+              editingId === t._id ? (
+                <button
+                  onClick={() => saveEdit(t._id)}
+                  className="bg-green-500 px-3 py-1 rounded"
+                >
+                  Save
+                </button>
+              ) : (
+                <button
+                  onClick={() => {
+                    setEditingId(t._id)
+                    setEditText(t.title)
+                  }}
+                  className="bg-blue-500 px-3 py-1 rounded"
+                >
+                  Edit
+                </button>
+              )
+            )}
+
+            
+            {t.user?._id === userId && (
+              <button
+                onClick={() => deleteTask(t._id)}
+                className="bg-red-500 px-3 py-1 rounded"
+              >
+                Delete
+              </button>
+            )}
 
           </div>
         </div>
